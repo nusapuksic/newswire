@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#191c24"/>
+  <meta name="description" content="FLASH: independent news updates published directly to Nostr. Follow the newswire and support the reporting."/>
+  <meta property="og:title" content="FLASH — Independent Newswire"/>
+  <meta property="og:description" content="Open news. Independent reporting. Supported by readers."/>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg"/>
+  <link rel="stylesheet" href="./styles.css"/>
+  <title>FLASH — Independent Newswire</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to news</a>
+  <div id="app">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#/" aria-label="FLASH, newswire home"><span class="brand-flash">FLASH<span class="brand-period">.</span></span><span class="brand-sub">INDEPENDENT NEWSWIRE</span></a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="#/" data-nav="wire">Newswire</a>
+          <a href="#/stories" data-nav="stories" data-feature="curatedLists" hidden>Stories</a>
+          <a href="#/support" data-nav="support">Support</a>
+        </nav>
+        <a class="header-support" href="#/support">Keep the signal alive <span aria-hidden="true">↗</span></a>
+        <button id="mobile-nav" class="mobile-nav" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div id="demo-banner" class="demo-banner hidden">DEMONSTRATION MODE — All news cards and payment targets are fictional examples. Payments are disabled. <a href="#/">Exit demo</a></div>
+    <main id="main" tabindex="-1"></main>
+    <footer class="site-footer"><div class="footer-inner"><div><span class="footer-brand">FLASH<span>.</span></span><p>Open news. Exclusively on NOSTR.</p></div><div class="footer-links"><a href="#/support">Support the desk</a></div><p class="footer-note">Flash - 2026</p></div></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./config.js"></script>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

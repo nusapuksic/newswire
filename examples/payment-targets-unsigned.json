@@ -1,0 +1,9 @@
+{
+  "kind": 10133,
+  "content": "",
+  "tags": [
+    ["payto", "lightning", "your-address@your-wallet.example"],
+    ["payto", "bitcoin", "YOUR_BITCOIN_ADDRESS"],
+    ["payto", "revolut", "YOUR_REVOLUT_USERNAME"]
+  ]
+}

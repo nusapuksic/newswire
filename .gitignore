@@ -1,0 +1,7 @@
+.DS_Store
+.nsyte/
+*.pem
+*.key
+*.nsec
+node_modules/
+.idea/

@@ -1,0 +1,11 @@
+{
+  "kind": 30004,
+  "content": "",
+  "tags": [
+    ["d", "developing-story-slug"],
+    ["title", "A developing story"],
+    ["description", "Follow-up reporting and context, assembled from signed Nostr updates."],
+    ["e", "REPLACE_WITH_HEX_ID_OF_A_KIND1_NOTE"],
+    ["e", "REPLACE_WITH_ANOTHER_HEX_ID_OF_A_KIND1_NOTE"]
+  ]
+}

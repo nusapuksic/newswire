@@ -1,0 +1,9 @@
+{
+  "kind": 9041,
+  "content": "Describe the proposed additional reporting assignment, budget, scope and expected deliverables here.",
+  "tags": [
+    ["amount", "1000000000"],
+    ["relays", "wss://relay.damus.io", "wss://nos.lol"],
+    ["summary", "Fund additional reporting" ]
+  ]
+}
