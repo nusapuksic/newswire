@@ -52,3 +52,21 @@ export function paytoUri(target) {
   // Percent-escape the account path so an event cannot inject URL queries/fragments.
   return `payto://${target.type}/${encodeURIComponent(target.authority)}`;
 }
+
+// Wallets and payment apps register their native schemes / web profile links, not payto:.
+// Authorities are strictly validated so a published event cannot inject arbitrary URLs.
+const APP_LINKS = Object.freeze({
+  bitcoin: a => /^(bc1[02-9ac-hj-np-z]{8,87}|BC1[02-9AC-HJ-NP-Z]{8,87}|[13][1-9A-HJ-NP-Za-km-z]{25,34})$/.test(a) ? `bitcoin:${a}` : null,
+  lightning: a => isLightningAddress(a) || /^lnurl1[02-9ac-hj-np-z]+$/i.test(a) ? `lightning:${a}` : null,
+  ethereum: a => /^0x[0-9a-fA-F]{40}$/.test(a) ? `ethereum:${a}` : null,
+  monero: a => /^[1-9A-HJ-NP-Za-km-z]{95,106}$/.test(a) ? `monero:${a}` : null,
+  nano: a => /^(nano|xrb)_[13][13-9a-km-uw-z]{59}$/.test(a) ? `nano:${a}` : null,
+  revolut: a => (a = a.replace(/^@/, ''), /^[A-Za-z0-9._-]{1,64}$/.test(a) ? `https://revolut.me/${a}` : null),
+  venmo: a => (a = a.replace(/^@/, ''), /^[A-Za-z0-9_-]{1,64}$/.test(a) ? `https://venmo.com/u/${a}` : null),
+  cashme: a => (a = a.replace(/^\$/, ''), /^[A-Za-z0-9_-]{1,32}$/.test(a) ? `https://cash.app/$${a}` : null)
+});
+
+export function paymentAppUri(target) {
+  if(!target || typeof target.authority !== 'string' || !Object.hasOwn(APP_LINKS, target.type)) return null;
+  return APP_LINKS[target.type](target.authority.trim());
+}

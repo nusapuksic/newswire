@@ -1,7 +1,7 @@
 import { NostrGateway, ThreadLoader, tagValues, uniqueRelays } from './nostr.js';
 import { addressReference, isOriginalKind1 } from './threads.js';
 import { verifyNostrEvent } from './verify.js';
-import { latestPaymentTargetsEvent, parsePaymentTargets, withLightningFallback, preferredLightningAddress, isLightningAddress, paytoUri } from './payment-targets.js';
+import { latestPaymentTargetsEvent, parsePaymentTargets, withLightningFallback, preferredLightningAddress, isLightningAddress, paytoUri, paymentAppUri } from './payment-targets.js';
 import { ProfileCache, chunkPubkeys, decodeNpub, isProfileFresh, latestProfiles, validPubkey } from './profiles.js';
 import { businessCard, emptyState, feedStatus, sectionHeading, storyCard as storyCardTemplate, supportPageShell, wirePage } from './templates.js';
 
@@ -407,6 +407,27 @@ async function copyValue(value,what){
  catch { announce('Copy unavailable. Select the address above to copy it manually.'); }
 }
 function copyNpub(value){ return copyValue(value,'npub'); }
+// Browsers do not report whether a custom URI scheme has a handler, so infer failure
+// when the page never loses focus/visibility shortly after the launch attempt.
+function appLaunchLink(text,uri,cls){
+ const a=link(text,uri,cls);
+ if(/^https?:/.test(uri))return a;
+ a.addEventListener('click',()=>{
+  let left=false;
+  const mark=()=>{left=true;};
+  window.addEventListener('blur',mark,{once:true});
+  document.addEventListener('visibilitychange',mark,{once:true});
+  window.addEventListener('pagehide',mark,{once:true});
+  setTimeout(()=>{
+   window.removeEventListener('blur',mark);
+   document.removeEventListener('visibilitychange',mark);
+   window.removeEventListener('pagehide',mark);
+   if(!left&&document.visibilityState==='visible'&&document.hasFocus())
+    announce('No payment app opened this link. Copy the address and paste it into your wallet.');
+  },1500);
+ });
+ return a;
+}
 function paymentCard(target){
  const card=$el('article','payment-card');
  const header=$el('div','payment-card-head');
@@ -418,10 +439,9 @@ function paymentCard(target){
  } else {
   actions.append(btn('Copy address',()=>copyValue(target.authority,'Payment address'),'btn-outline'));
   const uri=paytoUri(target);
-  if(uri){
-   actions.append(btn('Copy payment URI',()=>copyValue(uri,'Payment URI'),'btn-outline'));
-   actions.append(link('Open payment app ↗',uri,'btn-secondary'));
-  }
+  if(uri)actions.append(btn('Copy payment URI',()=>copyValue(uri,'Payment URI'),'btn-outline'));
+  const appUri=paymentAppUri(target);
+  if(appUri)actions.append(appLaunchLink('Open payment app ↗',appUri,'btn-secondary'));
   if(target.type==='lightning' && isLightningAddress(target.authority))
    actions.append(btn('Zap FLASH ⚡',()=>openZap(null,target.authority),'btn-primary'));
  }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { latestPaymentTargetsEvent, parsePaymentTargets, withLightningFallback, preferredLightningAddress, isLightningAddress, paytoUri } from '../public/src/payment-targets.js';
+import { latestPaymentTargetsEvent, parsePaymentTargets, withLightningFallback, preferredLightningAddress, isLightningAddress, paytoUri, paymentAppUri } from '../public/src/payment-targets.js';
 const pk='1'.repeat(64);
 const e=(at, tags, more={})=>({id:String(at).padStart(64,'0'),kind:10133,pubkey:pk,created_at:at,tags,...more});
 test('newest verified-event candidate wins for replaceable kind 10133',()=>{
@@ -24,6 +24,20 @@ test('unsafe account characters are handled without URI injection',()=>{
  const targets=parsePaymentTargets(e(1,[['payto','revolut','joe?redirect=https://phish.test#part']]));
  assert.equal(paytoUri(targets[0]),'payto://revolut/joe%3Fredirect%3Dhttps%3A%2F%2Fphish.test%23part');
  assert.deepEqual(parsePaymentTargets(e(1,[['payto','bitcoin','xxx\nfoo']])),[]);
+});
+test('open-app links use wallet-native schemes or HTTPS profiles, never payto:',()=>{
+ const uri=(type,authority)=>paymentAppUri({type,authority});
+ assert.equal(uri('bitcoin','bc1qzj7tr8t4g369jx077gjev29dr7hl7m2ltam4pw'),'bitcoin:bc1qzj7tr8t4g369jx077gjev29dr7hl7m2ltam4pw');
+ assert.equal(uri('lightning','alice@pay.example'),'lightning:alice@pay.example');
+ assert.equal(uri('ethereum','0x'+'a'.repeat(40)),'ethereum:0x'+'a'.repeat(40));
+ assert.equal(uri('revolut','@joe'),'https://revolut.me/joe');
+ assert.equal(uri('venmo','joe-1'),'https://venmo.com/u/joe-1');
+ assert.equal(uri('cashme','$joe'),'https://cash.app/$joe');
+ assert.equal(uri('revolut','joe?redirect=https://phish.test'),null);
+ assert.equal(uri('bitcoin','bc1abc?amount=1'),null);
+ assert.equal(uri('geyser','project'),null);
+ assert.equal(uri('unknown-wallet','abc'),null);
+ assert.equal(uri('toString','abc'),null);
 });
 test('profile Lightning is fallback, alongside other methods, with no duplication',()=>{
  const nonLn=[{type:'bitcoin',authority:'btc',source:'nip-a3'}];

@@ -140,7 +140,7 @@ const supportTemplate = createTemplate(`
         <div class="loading-card">Checking for published funding goals…</div>
       </div>
     </section>
-    <p class="footnote">Non-Lightning methods are direct payments to the published recipient; this site cannot track or verify them. A payto: link may require a compatible wallet/app. Always verify the destination in your wallet. Lightning payments are irreversible.</p>
+    <p class="footnote">Non-Lightning methods are direct payments to the published recipient; this site cannot track or verify them. "Open payment app" needs a wallet installed for that method; if nothing opens, copy the address instead. Always verify the destination in your wallet. Lightning payments are irreversible.</p>
   </div>
 `);
 
